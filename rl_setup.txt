@@ -1,0 +1,37 @@
+GPU Driver Kurulumu
+
+
+apt-get update && apt-get install -y linux-headers-$(uname -r) && apt-get install -y --no-install-recommends nvidia-driver-470
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+apt-get update && apt-get install -y nvidia-container-runtime
+nvidia-smi
+Paket bağımlılıkların (dependencies) kurulumu
+
+
+sudo apt-get update
+sudo pip3 install torch==1.10.0+cu113 torchvision==0.11.1+cu113 torchaudio==0.10.0+cu113 -f https://download.pytorch.o
+sudo pip3 install tensorboard
+sudo pip3 install pillow==8.3.2
+sudo pip3 install "numpy<1.24"
+Isaac-GYM indirilmesi
+
+
+Aşağıdaki web adresine Nvidia'ya kayıtlı kullanıcı adı ile girilip, kullanım koşulları kabul 
+edildikten sonra program indirilir.
+Isaac-GYM’in ilgili klasöre kopyalanması
+
+
+tar -xvf 
+cp isaacgym/ /root/rl/isaacgym/3
+sudo mkdir -p /root/rl
+cd /root/rl/
+
+cp legged_gym/ /root/rl/legged_gym/
+cp rsl_rl/ /root/rl/rsl_rl/
+cd /root/rl/
+cd /root/rl/isaacgym/python/
+sudo pip3 install  -e .
+cd /root/rl/rsl_rl/
+sudo pip3 install -e .
+cd /root/rl/legged_gym/
+sudo pip3 install -e .
