@@ -1,37 +1,53 @@
-GPU Driver Kurulumu
-
-
+#Nvidia-driver 470 kurulumu
 apt-get update && apt-get install -y linux-headers-$(uname -r) && apt-get install -y --no-install-recommends nvidia-driver-470
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+
+#İlgili repository’lerin eklenmesi
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list 
+| tee /etc/apt/sources.list.d/nvidia-docker.list
+
+#Container’ların GPU kullanabilmesi için container-runtime kurulması
 apt-get update && apt-get install -y nvidia-container-runtime
+
+#Driver’ın kurulumunun tamamlandığının test edilmesi
 nvidia-smi
-Paket bağımlılıkların (dependencies) kurulumu
 
+b)Öğrenme altyapısında kullanılan paketlere air bağımlılıkların kurulması
 
-sudo apt-get update
-sudo pip3 install torch==1.10.0+cu113 torchvision==0.11.1+cu113 torchaudio==0.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html || true
+sudo apt-get update && sudo apt-get install pip curl git -y
+pip3 install torch==1.10.0+cu113 torchvision==0.11.1+cu113 torchaudio==0.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 sudo pip3 install tensorboard
 sudo pip3 install pillow==8.3.2
 sudo pip3 install "numpy<1.24"
-Isaac-GYM indirilmesi
 
+c)IsaacGYM kurulum dosyalarının indirilmesi için Aşağıdaki web adresine Nvidia'ya kayıtlı kullanıcı adı ile girilip, kullanım koşulları kabul edildikten sonra ilgili dosya tar.gz formatında indirilir.
 
-Aşağıdaki web adresine Nvidia'ya kayıtlı kullanıcı adı ile girilip, kullanım koşulları kabul 
-edildikten sonra program indirilir.
-Isaac-GYM’in ilgili klasöre kopyalanması
+https://developer.nvidia.com/isaac-gym/download
 
+d)Isaac-GYM’in ve gerekli repository’lerin indirilmesi ve ilgili klasöre kopyalanması
 
-tar -xvf 
-cp isaacgym/ /root/rl/isaacgym/3
+#isaac_gym
+tar -xvf IsaacGym_Preview_4_Package.tar.gz
 sudo mkdir -p /root/rl
-cd /root/rl/
+cp -R isaacgym/ /root/rl/isaacgym/
 
-cp legged_gym/ /root/rl/legged_gym/
-cp rsl_rl/ /root/rl/rsl_rl/
-cd /root/rl/
-cd /root/rl/isaacgym/python/
-sudo pip3 install  -e .
-cd /root/rl/rsl_rl/
-sudo pip3 install -e .
-cd /root/rl/legged_gym/
-sudo pip3 install -e .
+#rsl_rl
+git clone https://github.com/leggedrobotics/rsl_rl
+cp -R rsl_rl /root/rl
+
+#legged_gym
+git clone https://github.com/leggedrobotics/legged_gym
+cp -R legged_gym /root/rl
+
+e)İlgili repository'lerin kurulumu
+#isaac_gym
+cd /root/rl/isaacgym/ && pip3 install -e .
+
+#rsl_rl
+cd /root/rl/rsl_rl/ && pip3 install -e .
+
+#legged_gym
+cd /root/rl/legged_gym/ && pip3 install -e .
+
+f)Kurulumun başarılı bir şekilde başladığını test etmek için örnek bir eğitim süreci başlatılır.
+
+python3 /root/rl/legged_gym/legged_gym/scripts/train.py --task=anymal_c_flat
